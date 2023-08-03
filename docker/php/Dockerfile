@@ -11,10 +11,8 @@ COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 RUN docker-php-ext-install pdo pdo_mysql mysqli
 
 WORKDIR /var/www/html
-
+USER root
+RUN chmod 777 -R /var/www/html
 CMD ["php-fpm"]
 
 EXPOSE 9000
-
-
-
