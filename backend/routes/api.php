@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\RegisterController;
+use App\Http\Controllers\API\IpListController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,11 +20,18 @@ Route::controller(RegisterController::class)->group(function(){
     Route::post('register', 'register');
     Route::post('login', 'login');
 });
-Route::get('login', function(){
-    return "hello";
-});
-      
+// Route::get('login', function(){
+//     return "hello";
+// });
+ //Route::post('/iplists', [IpListController::class, 'store']);
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::middleware('auth:sanctum')->group( function (){
+    //here is function store
+  //  Route::get('/iplists',[IpListController::class, 'index']);
+   
+   Route::resource('iplists', IpListController::class);
 });
+Route::get('/login', function () {
+    return response()->json(['message'=>'unauthorized eeeeentry'], 401);
+
+})->name('login');
