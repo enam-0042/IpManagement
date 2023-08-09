@@ -12,10 +12,11 @@ return new class extends Migration {
     {
         Schema::create('logs', function (Blueprint $table) {
             $table->id();
-            $table->string('execution_type');
-            $table->string('old_lable')->default(false)->nullable();
-            $table->string('new_lable')->default(false)->nullable();
-            $table->string('login_email');
+            $table->string('description');
+            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('ip_list_id')->nullable();
+            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('ip_list_id')->references('id')->on('ip_lists');
             $table->timestamps();
         });
     }

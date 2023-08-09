@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Validator;
 use App\Models\Log;
 use Laravel\Sanctum\PersonalAccessToken;
+use Carbon\Carbon;
 
 class IpListController extends BaseController
 {
@@ -23,20 +24,14 @@ class IpListController extends BaseController
         return $this->sendResponse($ip_lists, 'All IP address with corresponding label.');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
+
 
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
-        //
+
         $validator = Validator::make($request->all(), [
             'ip_address' => 'required|ip|max:64',
             'label' => 'required|max:100',
@@ -45,12 +40,22 @@ class IpListController extends BaseController
         if ($validator->fails()) {
             return $this->sendError('Validation Error.', $validator->errors());
         }
+        try {
+            $input = $request->all();
+            $user = auth('sanctum')->user();
 
-        $input = $request->all();
-        $newIp = IpList::create($input);
+            $newIp = IpList::create($input);
+            $newLog = new Log();
+            $newLog->description = 'Ip created at ' . Carbon::now()->toDayDateTimeString();
+            ;
+            $newLog->user_id = $user->id;
+            $newLog->ip_list_id = $newIp->id;
+            $newLog->save();
 
-
-        return $this->sendResponse($newIp, 'Ip created successfully.');
+            return $this->sendResponse($newIp, 'Ip created successfully.');
+        } catch (\Exception $e) {
+            return $this->sendError('Error at ip creation', 500);
+        }
     }
 
     /**
@@ -68,61 +73,40 @@ class IpListController extends BaseController
 
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(IpList $ipList)
-    {
-        //
-    }
+
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, IpList $ipList,$id)
+    public function update(Request $request, IpList $ipList)
     {
         $input = $request->all();
         $validator = Validator::make($input, [
             'ip_address' => 'required|ip|max:64',
             'label' => 'required|max:100',
         ]);
-
+        // dd($input);
         if ($validator->fails()) {
             return $this->sendError('Validation Error.', $validator->errors());
         }
-        $newLogs= new Log();
-        $updatedIp=IpList::find($id);       
-        $newLogs->execution_type = 'Updating Label';
-        $newLogs->old_lable = $updatedIp->label;
-        $newLogs->new_lable = $input['label'];
-        $user =  auth('sanctum')->user()  ;
-
-        $newLogs->login_email=$user->email;
-        $log=$newLogs->save();
-        // if($log){}
-        // else{
-        //     return $this->sendResponse($log,'errorr');
-        // }
-        $updatedIp->update([
-            'ip_address' => $request->ip_address,
-            'label' => $request->label,
-        ]);
-
-        $res=$updatedIp->save();
-        if($res)
-        return $this->sendResponse($res, 'IP Label updated successfully.');
-        else {
-        $newLogs->delete();
-        return $this->sendError('IP address is not updated');        
+         dd($ipList->get());
+        try {
+            $user = auth('sanctum')->user();            
+           //$ipList= IpList::where('ip_address', 'Paris')->get(); 
+           
+            $ipList->label = $input['label'];
+           
+            $ipList->update();
+           
+            $newLog = new Log();
+            $newLog->ip_list_id = $ipList->id;
+            $newLog->description="Change label  {$prev_label}  to  {$ipList->label}";
+            $newLog->user_id=$user->id;
+            $newLog->save();
+            return $this->sendResponse($prev_label, 'IP Label updated successfully.');
+        } catch (\Exception $e) {
+            return $this->sendError('Ip label updation failed', 500);
         }
-
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(IpList $ipList)
-    {
-        //
-    }
 }
