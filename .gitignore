@@ -23,6 +23,6 @@ bundles/
 vendor/pkg/
 pyenv
 Vagrantfile
-database
+database/mysql
 logs
 .env
