@@ -27,7 +27,9 @@ Route::controller(RegisterController::class)->group(function(){
 
 Route::middleware('auth:sanctum')->group( function (){
     //here is function store
-  //  Route::get('/iplists',[IpListController::class, 'index']);
+    // Route::get('/sanctum',function(){
+    //     return auth()->user();
+    // });
    
    Route::resource('iplists', IpListController::class);
 });

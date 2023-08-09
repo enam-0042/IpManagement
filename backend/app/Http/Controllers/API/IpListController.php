@@ -6,6 +6,8 @@ use App\Http\Controllers\API\BaseController;
 use App\Models\IpList;
 use Illuminate\Http\Request;
 use Validator;
+use App\Models\Log;
+use Laravel\Sanctum\PersonalAccessToken;
 
 class IpListController extends BaseController
 {
@@ -88,19 +90,31 @@ class IpListController extends BaseController
         if ($validator->fails()) {
             return $this->sendError('Validation Error.', $validator->errors());
         }
+        $newLogs= new Log();
+        $updatedIp=IpList::find($id);       
+        $newLogs->execution_type = 'Updating Label';
+        $newLogs->old_lable = $updatedIp->label;
+        $newLogs->new_lable = $input['label'];
+        $user =  auth('sanctum')->user()  ;
 
-        $updatedIp=IpList::find($id);
+        $newLogs->login_email=$user->email;
+        $log=$newLogs->save();
+        // if($log){}
+        // else{
+        //     return $this->sendResponse($log,'errorr');
+        // }
         $updatedIp->update([
             'ip_address' => $request->ip_address,
             'label' => $request->label,
         ]);
-        //$ipList->label = $input['label'];
+
         $res=$updatedIp->save();
         if($res)
-        return $this->sendResponse($updatedIp, 'IP Label updated successfully.');
-        else 
-         //return "flsfs";
-        return $this->sendError('IP address is not updated');
+        return $this->sendResponse($res, 'IP Label updated successfully.');
+        else {
+        $newLogs->delete();
+        return $this->sendError('IP address is not updated');        
+        }
 
     }
 
