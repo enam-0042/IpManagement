@@ -26,12 +26,11 @@ Route::controller(RegisterController::class)->group(function(){
  //Route::post('/iplists', [IpListController::class, 'store']);
 
 Route::middleware('auth:sanctum')->group( function (){
-    //here is function store
-    // Route::get('/sanctum',function(){
-    //     return auth()->user();
-    // });
+    Route::apiResource('ip_lists', IpListController::class)->only([
+        'index', 'show', 'store', 'update'
+    ]);
    
-   Route::resource('iplists', IpListController::class);
+   //Route::resource('iplists', IpListController::class);
 });
 Route::get('/login', function () {
     return response()->json(['message'=>'unauthorized eeeeentry'], 401);

@@ -89,23 +89,23 @@ class IpListController extends BaseController
         if ($validator->fails()) {
             return $this->sendError('Validation Error.', $validator->errors());
         }
-         dd($ipList->get());
+        
         try {
-            $user = auth('sanctum')->user();            
-           //$ipList= IpList::where('ip_address', 'Paris')->get(); 
-           
+            $user = auth('sanctum')->user();
+            $prev_label = $ipList->label;
             $ipList->label = $input['label'];
-           
             $ipList->update();
-           
-            $newLog = new Log();
-            $newLog->ip_list_id = $ipList->id;
-            $newLog->description="Change label  {$prev_label}  to  {$ipList->label}";
-            $newLog->user_id=$user->id;
-            $newLog->save();
-            return $this->sendResponse($prev_label, 'IP Label updated successfully.');
+
+            if($prev_label != $ipList->label){
+                $newLog = new Log();
+                $newLog->ip_list_id = $ipList->id;
+                $newLog->description="Change label  {$prev_label}  to  {$ipList->label}";
+                $newLog->user_id=$user->id;
+                $newLog->save();
+            }
+            return $this->sendResponse($newLog, 'IP Label updated successfully.');
         } catch (\Exception $e) {
-            return $this->sendError('Ip label updation failed', 500);
+            return $this->sendError('Ip label updation failed',500);
         }
     }
 
