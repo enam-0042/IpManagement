@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\API;
+
 use Illuminate\Http\Response;
 use App\Http\Controllers\API\BaseController;
 use App\Http\Requests\IpListRequest;
@@ -9,6 +10,7 @@ use Illuminate\Http\Request;
 use Validator;
 use App\Models\LogHistory;
 use App\Repositories\Interfaces\IpListRepositoryInterface;
+use App\Repositories\Interfaces\LogHistoryRepositoryInterface;
 use Laravel\Sanctum\PersonalAccessToken;
 use Carbon\Carbon;
 use Illuminate\Http\Response as HttpResponse;
@@ -18,22 +20,25 @@ use Illuminate\Support\Facades\Log;
 class IpListController extends BaseController
 {
     private $ipListRepository;
+    private $logHistoryRepository;
 
-    public function __construct(IpListRepositoryInterface $ipListRepository)
+    public function __construct(IpListRepositoryInterface $ipListRepository, LogHistoryRepositoryInterface $logHistoryRepository)
     {
         $this->ipListRepository = $ipListRepository;
+        $this->logHistoryRepository = $logHistoryRepository;
     }
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        try{
+        try {
             $records = $this->ipListRepository->allIpList();
             return $this->sendResponse($records, 'All IP address with corresponding label.');
-        } catch(\Exception $e){
-             Log::error("Database query failed: {$e->getMessage()}");
-            return $this->sendError('Failed to retrive ip lists', Response::HTTP_INTERNAL_SERVER_ERROR  );
+        } catch (\Exception $e) {
+            Log::error("Database query failed: {$e->getMessage()}");
+            return $this->sendError('Failed to retrive ip lists', Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -44,21 +49,14 @@ class IpListController extends BaseController
      */
     public function store(IpListRequest $request)
     {
-
+        $payloadData = $request->all();
+        $user = auth('sanctum')->user();
 
         try {
-            $input = $request->all();
-            $user = auth('sanctum')->user();
-
-            $newIp = IpList::create($input);
-            // $newLog = new Log();
-            // $newLog->description = 'Ip created at ' . Carbon::now()->toDayDateTimeString();
-            // ;
-            // $newLog->user_id = $user->id;
-            // $newLog->ip_list_id = $newIp->id;
-            // $newLog->save();
-
-            return $this->sendResponse($newIp, 'Ip created successfully.');
+            $message = 'Ip created at ' . Carbon::now()->toDayDateTimeString();
+            $ipList = $this->ipListRepository->storeIpList($payloadData);
+            $this->logHistoryRepository->storeIpListLog($message, $ipList, $user);
+            return $this->sendResponse($ipList, 'Ip created successfully.');
         } catch (\Exception $e) {
             return $this->sendError('Error at ip creation', 500);
         }
@@ -67,14 +65,15 @@ class IpListController extends BaseController
     /**
      * Display the specified resource.
      */
-    public function show($id)
+    public function show(IpList $ipList)
     {
         //
-        $input = IpList::where('id', $id)->first();
-        if (is_null($input)) {
-            return $this->sendError('This id is not found');
-        } else {
-            return $this->sendResponse($input, 'This is the Ip details');
+        try {
+            $ipList = $this->ipListRepository->findIpList($ipList);
+            return $this->sendResponse($ipList, 'All IP address with corresponding label.');
+        } catch (\Exception $e) {
+            Log::error("Database query failed: {$e->getMessage()}");
+            return $this->sendError('Failed to retrive ip lists', Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -86,26 +85,21 @@ class IpListController extends BaseController
      */
     public function update(IpListRequest $request, IpList $ipList)
     {
-        $input = $request->all();
-   
-        
-        try {
-            $user = auth('sanctum')->user();
-            $prev_label = $ipList->label;
-            $ipList->label = $input['label'];
-            $ipList->update();
+        $payloadData = $request->all();
+        $user = auth('sanctum')->user();
+        $prev_label = $ipList->label;
 
-            if($prev_label != $ipList->label){
-                // $newLog = new Log();
-                // $newLog->ip_list_id = $ipList->id;
-                // $newLog->description="Change label  {$prev_label}  to  {$ipList->label}";
-                // $newLog->user_id=$user->id;
-                // $newLog->save();
+        try {
+
+            $ipList = $this->ipListRepository->updateIpList($payloadData, $ipList);
+
+            if ($prev_label != $ipList->label) {
+                $message = "Change label  {$prev_label}  to  {$ipList->label}";
+                $this->logHistoryRepository->storeIpListLog($message, $ipList, $user);
             }
             return $this->sendResponse($ipList, 'IP Label updated successfully.');
         } catch (\Exception $e) {
-            return $this->sendError('Ip label updation failed',500);
+            return $this->sendError('Ip label updation failed'.$e, 500);
         }
     }
-
 }

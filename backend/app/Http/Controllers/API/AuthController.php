@@ -4,15 +4,13 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Requests\AuthRequest;
 use App\Repositories\Interfaces\LogHistoryRepositoryInterface;
-use Illuminate\Http\Request;
 use App\Http\Controllers\API\BaseController as BaseController;
 use App\Models\User;
-use App\Models\LogHistory;
-use App\Repositories\LogHistoryRepository;
 use Illuminate\Support\Facades\Auth;
-use JsonException;
-use Validator;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Casts\Json;
+use Illuminate\Http\JsonResponse;
+
 class AuthController extends BaseController
 {
     private $logHistoryRepository;
@@ -24,7 +22,7 @@ class AuthController extends BaseController
     /**
      * Register api
      *
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
 
      public function register(AuthRequest $request)
@@ -53,7 +51,7 @@ class AuthController extends BaseController
     {
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
             $user = Auth::user();
-            $success['token'] = $user->createToken('Its user login')->plainTextToken;
+            $success['token'] = $user->createToken('Ip Management')->plainTextToken;
             $success['name'] = $user->name;
             $message='Login at '.Carbon::now()->toDayDateTimeString();
        

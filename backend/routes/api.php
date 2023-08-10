@@ -4,6 +4,7 @@ use App\Http\Controllers\API\AuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\IpListController;
+use App\Http\Controllers\API\LogHistoryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,8 +30,10 @@ Route::middleware('auth:sanctum')->group( function (){
     Route::apiResource('ip_lists', IpListController::class)->only([
         'index', 'show', 'store', 'update'
     ]);
+    Route::get('/log_histories', [LogHistoryController::class, 'index']);
 });
 Route::get('/login', function () {
     return response()->json(['message'=>'unauthorized eeeeentry'], 401);
 
 })->name('login');
+
