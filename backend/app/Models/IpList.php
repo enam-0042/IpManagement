@@ -18,5 +18,7 @@ class IpList extends Model
         'ip_address',
         'label',
     ];
-
+    public function log_histories(){
+        return $this->hasMany(LogHistory::class);
+    }
 }

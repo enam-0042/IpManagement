@@ -42,4 +42,7 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+    public function log_histories(){
+        return $this->hasMany(LogHistory::class);
+    }
 }

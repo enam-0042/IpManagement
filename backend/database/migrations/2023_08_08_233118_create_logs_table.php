@@ -10,7 +10,7 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('logs', function (Blueprint $table) {
+        Schema::create('log_histories', function (Blueprint $table) {
             $table->id();
             $table->string('description');
             $table->unsignedBigInteger('user_id');

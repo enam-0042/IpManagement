@@ -1,8 +1,8 @@
 <?php
 
+use App\Http\Controllers\API\AuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\API\RegisterController;
 use App\Http\Controllers\API\IpListController;
 
 /*
@@ -16,7 +16,7 @@ use App\Http\Controllers\API\IpListController;
 |
 */
 
-Route::controller(RegisterController::class)->group(function(){
+Route::controller(AuthController::class)->group(function(){
     Route::post('register', 'register');
     Route::post('login', 'login');
 });
@@ -29,8 +29,6 @@ Route::middleware('auth:sanctum')->group( function (){
     Route::apiResource('ip_lists', IpListController::class)->only([
         'index', 'show', 'store', 'update'
     ]);
-   
-   //Route::resource('iplists', IpListController::class);
 });
 Route::get('/login', function () {
     return response()->json(['message'=>'unauthorized eeeeentry'], 401);
