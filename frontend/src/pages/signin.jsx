@@ -1,10 +1,42 @@
 import { useAuth } from "../hooks/useAuth";
+import { useState } from "react"
+
 function Signin() {
   const {login} = useAuth()
-  function handleSignin(){
-    let userdata={"token":"5|0RBcTsKTfFGiyJPgh4SliSiKYf02bWupXPkYMYNl","name":"saiful"};
-    login(userdata);
+  const [loginData, setLoginData] = useState({
+    email:'',
+    password:'',
+  });
+
+  const handleChange = (e) => {
+    let name=e.target.name
+    let value=e.target.value    
+    // console.log(name);
+    // console.log(value);
     
+    setLoginData({...loginData, [name]:value });
+   // console.log(loginData);
+  };
+
+  async function handleSignin(event) {
+    console.log(event);
+    event.preventDefault();
+    // let data={"email": email, "password":password}
+    
+    const response = await fetch("http://localhost/api/login",{
+      method: "POST", // *GET, POST, PUT, DELETE, etc.
+
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(loginData), // body data type must match "Content-Type" header
+
+    });
+
+    const responseData = await response.json();
+    console.log(responseData.data);
+    login(responseData.data);
+
   }
   return (
     <>
@@ -16,7 +48,7 @@ function Signin() {
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form className="space-y-6" action="#" method="POST">
+          <form className="space-y-6" onSubmit={handleSignin}>
             <div>
               <label
                 htmlFor="email"
@@ -30,6 +62,8 @@ function Signin() {
                   name="email"
                   type="email"
                   required
+                  value={loginData.email}
+                  onChange={handleChange}
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
               </div>
@@ -47,13 +81,15 @@ function Signin() {
                   name="password"
                   type="password"
                   required
+                  value={loginData.password}
+                  onChange={handleChange}
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
               </div>
             </div>
             <div>
               <button
-                type="submit" onClick={handleSignin}
+                type="submit"
                 className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
                 Sign in
