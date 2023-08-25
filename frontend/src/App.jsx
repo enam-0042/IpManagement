@@ -1,20 +1,13 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
-import Signin from './pages/signin'
-import Signup from './pages/signup'
-import Home from './pages/home'
-
+import Routes from './routes'
+import { AuthProvider } from './hooks/useAuth'
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
     <>
-      {/* <Signin/> */}
-      {/* <Signup/> */}
-      <Home/>
+    <AuthProvider>
+      <Routes/>
+    </AuthProvider>
     </>
   )
 }
