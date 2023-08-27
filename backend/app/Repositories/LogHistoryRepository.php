@@ -12,8 +12,7 @@ class LogHistoryRepository implements LogHistoryRepositoryInterface
 
     public function allLogListByUser($userId){
         $user=User::findOrFail($userId);
-       // dd($user);
-        return    $user->log_histories()->get();
+        return $user->log_histories()->get();
     }
     public function storeAuthLog($message, User $user){
         $logHistory= new LogHistory();

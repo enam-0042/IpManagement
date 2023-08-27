@@ -1,7 +1,8 @@
+import { send } from "../api/globalFetch";
 import { useAuth } from "../hooks/useAuth";
-import { useState } from "react"
-
+import { useState,useEffect } from "react"
 function Signin() {
+
   const {login} = useAuth()
   const [loginData, setLoginData] = useState({
     email:'',
@@ -23,21 +24,33 @@ function Signin() {
     event.preventDefault();
     // let data={"email": email, "password":password}
     
-    const response = await fetch("http://localhost/api/login",{
-      method: "POST", // *GET, POST, PUT, DELETE, etc.
+    // const response = await fetch("http://localhost/api/login",{
+    //   method: "POST", // *GET, POST, PUT, DELETE, etc.
 
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(loginData), // body data type must match "Content-Type" header
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: JSON.stringify(loginData), // body data type must match "Content-Type" header
 
-    });
-
-    const responseData = await response.json();
-    console.log(responseData.data);
+    // });
+    // const responseData = await response.json();
+    // console.log(responseData.data);
+    const responseData= await send('login',loginData);
+   // console.log(responseData);
     login(responseData.data);
-
   }
+  
+  useEffect(()=>{
+   let  interval= setInterval(()=>{
+          console.log('heello');
+
+    }, 300);
+    return ()=>{clearInterval(interval);};
+  },[] );
+  useEffect(()=>{
+    console.log('changing email');
+
+  },[loginData.email] );
   return (
     <>
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
