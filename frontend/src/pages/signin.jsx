@@ -1,56 +1,31 @@
 import { send } from "../api/globalFetch";
+import Loader from "../components/loader";
 import { useAuth } from "../hooks/useAuth";
-import { useState,useEffect } from "react"
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 function Signin() {
-
-  const {login} = useAuth()
+  const [loading,setLoading]=useState(false);
+  const { login } = useAuth();
   const [loginData, setLoginData] = useState({
-    email:'',
-    password:'',
+    email: "",
+    password: "",
   });
 
   const handleChange = (e) => {
-    let name=e.target.name
-    let value=e.target.value    
-    // console.log(name);
-    // console.log(value);
-    
-    setLoginData({...loginData, [name]:value });
-   // console.log(loginData);
+    let name = e.target.name;
+    let value = e.target.value;
+
+    setLoginData({ ...loginData, [name]: value });
   };
 
   async function handleSignin(event) {
-    console.log(event);
+    setLoading(true);
     event.preventDefault();
-    // let data={"email": email, "password":password}
-    
-    // const response = await fetch("http://localhost/api/login",{
-    //   method: "POST", // *GET, POST, PUT, DELETE, etc.
 
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify(loginData), // body data type must match "Content-Type" header
-
-    // });
-    // const responseData = await response.json();
-    // console.log(responseData.data);
-    const responseData= await send('login',loginData);
-   // console.log(responseData);
+    const responseData = await send("login", loginData);
+    setLoading(false);
     login(responseData.data);
   }
-  
-  useEffect(()=>{
-   let  interval= setInterval(()=>{
-          console.log('heello');
-
-    }, 300);
-    return ()=>{clearInterval(interval);};
-  },[] );
-  useEffect(()=>{
-    console.log('changing email');
-
-  },[loginData.email] );
   return (
     <>
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
@@ -104,11 +79,22 @@ function Signin() {
               <button
                 type="submit"
                 className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+
               >
+                {loading && <Loader/>}
                 Sign in
               </button>
             </div>
           </form>
+          <p className="mt-2">
+            Not Register?
+            <Link
+            to="/signup"
+            className="text-sm font-semibold leading-6 text-indigo-900 hover:text-black"
+          >
+            Sign up
+          </Link>
+          </p>
         </div>
       </div>
     </>

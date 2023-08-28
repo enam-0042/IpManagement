@@ -23,7 +23,7 @@ function Iplists({ ipList }) {
             </tr>
           </thead>
           <tbody>
-            {ipList.map((ip,index) => {
+            {ipList?.map((ip,index) => {
               return (
                 <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700" key={ip.id}>
                   <th

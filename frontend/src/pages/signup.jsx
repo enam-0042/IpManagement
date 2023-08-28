@@ -1,8 +1,12 @@
 import { useAuth } from "../hooks/useAuth";
 import { useState, useEffect } from "react";
-import Signin from "./signin"; // for login redirect
+import Loader from "../components/loader";
+import { send } from "../api/globalFetch";
+import { Link } from "react-router-dom";
+
 function Signup() {
-  const {login} = useAuth()
+  const { login } = useAuth();
+  const [loading, setLoading] = useState(false);
 
   const [signupData, setSignupData] = useState({
     name: "",
@@ -13,41 +17,17 @@ function Signup() {
   const handleChange = (e) => {
     let name = e.target.name;
     let value = e.target.value;
-    // console.log(name);
-    // console.log(value);
 
     setSignupData({ ...signupData, [name]: value });
-    //console.log(signupData);
   };
   async function handleSignup(event) {
-    //console.log(event);
     event.preventDefault();
-    // let data={"email": email, "password":password}
+    setLoading(true);
 
-    const response = await fetch("http://localhost/api/register", {
-      method: "POST", // *GET, POST, PUT, DELETE, etc.
-
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(signupData), // body data type must match "Content-Type" header
-    });
-
-    const responseData = await response.json();
-    console.log(responseData.data);
+    const responseData = await send("register", signupData);
+    setLoading(false);
     login(responseData.data);
   }
-  useEffect(() => {
-    let interval = setInterval(() => {
-      console.log("hello");
-    }, 300);
-    return () => {
-      clearInterval(interval);
-    };
-  }, []);
-  useEffect(() => {
-    console.log("changing email");
-  }, [signupData.email]);
   return (
     <>
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
@@ -140,10 +120,20 @@ function Signup() {
                 type="submit"
                 className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
+                {loading && <Loader />}
                 Sign up
               </button>
             </div>
           </form>
+          <p className="mt-2">
+            Registered?
+            <Link
+              to="/signin"
+              className="text-sm font-semibold leading-6 text-indigo-900 hover:text-black"
+            >
+              Signin
+            </Link>
+          </p>
         </div>
       </div>
     </>

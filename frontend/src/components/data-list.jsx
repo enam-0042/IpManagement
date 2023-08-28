@@ -4,8 +4,11 @@ export default function Datalist({ loadData, children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-   loadData();
-   setLoading(false);
+    async function load() {
+      await loadData();
+      setLoading(false);
+    }
+    load();
   }, []);
   return (
     <div>
