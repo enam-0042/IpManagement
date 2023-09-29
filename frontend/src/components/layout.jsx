@@ -1,10 +1,11 @@
-import React from 'react'
-import Navigation from './navigation'
-export default function Layout({children}) {
+import React from "react";
+import Navigation from "./navigation";
+export default function Layout({ children }) {
   return (
-<div className="bg-white">
-        <Navigation />
-        {children}
-      </div>
-  )
+    <div className="bg-white">
+      <Navigation />
+  
+      {children}
+    </div>
+  );
 }

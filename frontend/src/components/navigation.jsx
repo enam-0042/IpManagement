@@ -18,6 +18,8 @@ function Navigation() {
           >
             Home
           </Link>
+
+
           <Link
             to="/loglist"
             className="text-sm font-semibold leading-6 text-indigo-900 hover:text-black"

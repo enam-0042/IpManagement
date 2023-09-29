@@ -9,6 +9,7 @@ function Home() {
   async function getIpList() {
     const response = await get("ip_lists");
     setIpList(response.data);
+    
   }
 
   return (

@@ -1,15 +1,12 @@
-import { Fragment, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { send } from "../api/globalFetch";
 import Loader from "../components/loader";
-function Editip({ open, setOpen, selectedIp }) {
-  const [loading, setLoading] = useState(false);
 
-  const [formData, setFormData] = useState({
-    ip_address: selectedIp.ip_address,
-    label: selectedIp.label,
-    id: selectedIp.id,
-  });
+function Editip({ open, setOpen, selectedIp }) {
+  
+  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({});
   const handleChange = (e) => {
     let name = e.target.name;
     let value = e.target.value;
@@ -20,16 +17,21 @@ function Editip({ open, setOpen, selectedIp }) {
   async function handleSubmit(event) {
     setLoading(true);
     event.preventDefault();
-    //  console.log(formData);
-    const responseData = await send(`ip_lists/${selectedIp.id}`, {...selectedIp, ...formData},'PUT');
+    const responseData = await send(`ip_lists/${selectedIp.id}`, { ...formData},'PUT');
     console.log(responseData);
     setLoading(false);
     setOpen(false);
-  }
-
+  } 
   const cancelButtonRef = useRef(null);
+
+  useEffect( ()=>{
+    setFormData({
+      ...selectedIp
+    });
+  },[selectedIp] )
   return (
     <Transition.Root show={open} as={Fragment}>
+
       <Dialog
         as="div"
         className="relative z-10"
@@ -66,7 +68,7 @@ function Editip({ open, setOpen, selectedIp }) {
                       as="h3"
                       className="w-full text-base font-semibold leading-6 text-gray-900"
                     >
-                      Add New IP
+                     Edit IP
                     </Dialog.Title>
                     <div className="mt-2">
                       <div className="text-sm text-gray-500">
@@ -84,7 +86,6 @@ function Editip({ open, setOpen, selectedIp }) {
                                 name="ip_address"
                                 type="text"
                                 required
-                                defaultValue={selectedIp.ip_address}
                                 value={formData.ip_address}
                                 readOnly
                                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
@@ -103,7 +104,6 @@ function Editip({ open, setOpen, selectedIp }) {
                                 id="label"
                                 name="label"
                                 type="text"
-                                defaultValue={selectedIp.label}
                                 value={formData.label}
                                 required
                                 onChange={handleChange}
@@ -117,7 +117,7 @@ function Editip({ open, setOpen, selectedIp }) {
                               className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                             >
                               {loading && <Loader />}
-                              Edit ip
+                              Update IP
                             </button>
                           </div>
                         </form>

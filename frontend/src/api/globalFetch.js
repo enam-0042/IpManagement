@@ -1,6 +1,5 @@
 import { getLocalStorage } from "../hooks/useLocalStorage";
 const BASE_URL = "http://localhost/api/";
-const BASE_CONFIG = { headers: { "Content-Type": "application/json" } };
 
 export async function send(
   endPoint,
@@ -8,7 +7,10 @@ export async function send(
   method = "POST",
   config = {}
 ) {
+  const BASE_CONFIG = { headers: { "Content-Type": "application/json" } };
+
   try {
+    
     const user = getLocalStorage("user");
 
     if (user && user.token) {
@@ -27,10 +29,11 @@ export async function send(
 }
 
 export async function get(endPoint, config = {}) {
-  // console.log(user);
+  const BASE_CONFIG = { headers: { "Content-Type": "application/json" } };
+
   try {
     const user = getLocalStorage("user");
-
+    BASE_CONFIG.method='GET'
     if (user && user.token) {
       BASE_CONFIG.headers.Authorization = "Bearer " + user.token;
     }
