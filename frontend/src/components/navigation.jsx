@@ -2,7 +2,7 @@ import Addip from "./add-ip";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
-function Navigation() {
+function Navigation({getIpList}) {
   const { logout } = useAuth();
   const [open, setOpen] = useState(false);
   return (
@@ -45,7 +45,7 @@ function Navigation() {
         </div>
       </nav>
 
-      <Addip open={open} setOpen={setOpen} />
+      <Addip open={open} setOpen={setOpen} getIpList={getIpList}/>
     </header>
   );
 }

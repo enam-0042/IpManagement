@@ -5,7 +5,7 @@ namespace App\Http\Controllers\API;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller as Controller;
-
+use Illuminate\Http\Response;
 
 class BaseController extends Controller
 {
@@ -23,7 +23,7 @@ class BaseController extends Controller
         ];
 
 
-        return response()->json($response, 200);
+        return response()->json($response, Response::HTTP_OK);
     }
 
 
@@ -32,7 +32,7 @@ class BaseController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function sendError($error, $errorMessages = [], $code = 404)
+    public function sendError($error, $errorMessages = [], $code = Response::HTTP_NOT_FOUND)//
     {
     	$response = [
             'success' => false,

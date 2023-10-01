@@ -13,9 +13,9 @@ function Home() {
   }
 
   return (
-    <Layout>
+    <Layout getIpList={getIpList}>
       <Datalist loadData={getIpList}>
-        <Iplists ipList={ipList} />
+        <Iplists ipList={ipList} getIpList={getIpList} />
       </Datalist>
     </Layout>
   );

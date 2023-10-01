@@ -1,6 +1,5 @@
 import { getLocalStorage } from "../hooks/useLocalStorage";
 const BASE_URL = "http://localhost/api/";
-
 export async function send(
   endPoint,
   payloadData,

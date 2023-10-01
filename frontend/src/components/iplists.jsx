@@ -1,7 +1,7 @@
 import React from "react";
 import Editip from "./edit-ip";
 import { useState } from "react";
-function Iplists({ ipList }) {
+function Iplists({ ipList, getIpList }) {
   const [open, setOpen] = useState(false);
   const [selectedIp, setSelectedIp] = useState({});
   //console.log(ipList);
@@ -60,7 +60,7 @@ function Iplists({ ipList }) {
             })}
           </tbody>
         </table>
-        <Editip open={open} setOpen={setOpen} selectedIp={selectedIp}/>
+        <Editip open={open} setOpen={setOpen} selectedIp={selectedIp} getIpList={getIpList}/>
       </div>
     </div>
   );

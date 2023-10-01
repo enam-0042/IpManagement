@@ -2,7 +2,7 @@ import { Fragment, useRef, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { send } from "../api/globalFetch";
 import Loader from "../components/loader";
-function Addip({open, setOpen}) {
+function Addip({open, setOpen, getIpList}) {
   
   const [loading,setLoading]=useState(false);
   const [formData, setFormData] = useState({
@@ -24,8 +24,14 @@ function Addip({open, setOpen}) {
     console.log(responseData);
     setLoading(false);
     setOpen(false);
+    getIpList();
+    setFormData({
+      ip_address: "",
+      label: "",
+    });
 
   }
+
 
   const cancelButtonRef = useRef(null);
   return (

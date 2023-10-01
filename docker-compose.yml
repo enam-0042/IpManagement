@@ -32,15 +32,30 @@ services:
       - "3306:3306"
     volumes:
       - ./database/mysql:/var/lib/mysql
+  
+  mysql_test:
+    image: mysql:8.0.27
+    container_name: mysql_test_ip_management_enamul_0042
+    environment:
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
+      MYSQL_DATABASE: "${MYSQL_DATABASE}"
+      MYSQL_USER: "${MYSQL_USER}"
+      MYSQL_PASSWORD: "${MYSQL_PASSWORD}"
+    ports:
+      - "3307:3307"
+    volumes:
+      - ./database_test/mysql:/var/lib/mysql
+  
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
     container_name: pma_ip_management_enamul_0042
     links:
-      - mysql
+      - mysql_test
     environment:
-      PMA_HOST: mysql
-      PMA_PORT: 3306
+      PMA_HOST: mysql_test
+      PMA_PORT: 3307
       PMA_ARBITRARY: 1
     restart: always
     ports:
       - 8085:80
+  

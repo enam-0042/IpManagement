@@ -4,6 +4,8 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Http\Response;
+
 class IpListRequest extends FormRequest
 {
     /**
@@ -49,7 +51,7 @@ class IpListRequest extends FormRequest
             'message'   => 'Validation errors',
             'data'      => $validator->errors()
 
-        ]));
+        ],Response::HTTP_BAD_REQUEST));
     }
 
 }

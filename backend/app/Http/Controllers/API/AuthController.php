@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Json;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 
 class AuthController extends BaseController
 {
@@ -38,7 +39,7 @@ class AuthController extends BaseController
 
             return $this->sendResponse($success, 'User register successfully.');
         } catch (\Exception $e) {
-            return $this->sendError('User registration failed'.$e, 500);
+            return $this->sendError('User registration failed'.$e, Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 

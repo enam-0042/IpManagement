@@ -3,7 +3,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { send } from "../api/globalFetch";
 import Loader from "../components/loader";
 
-function Editip({ open, setOpen, selectedIp }) {
+function Editip({ open, setOpen, selectedIp,getIpList }) {
   
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({});
@@ -21,6 +21,7 @@ function Editip({ open, setOpen, selectedIp }) {
     console.log(responseData);
     setLoading(false);
     setOpen(false);
+    getIpList();
   } 
   const cancelButtonRef = useRef(null);
 
