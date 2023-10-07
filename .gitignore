@@ -26,3 +26,4 @@ Vagrantfile
 database/mysql
 logs
 .env
+database_test/mysql
