@@ -18,36 +18,80 @@ class AuthTest extends TestCase
         "password" => "demo12345",
         "confirm_password" => "demo12345"
     ];
+
     /**
-     * A basic feature test example.
+     * Test a successful user registration.
      */
-    
-    public function test_register_required_field_validation(): void
-    {
-        $response = $this->json('POST', 'api/register', ['Accept' => 'application/json']) ;
-       // dd($response);
-        $response->assertStatus(Response::HTTP_BAD_REQUEST); 
-        
 
-        $response->assertJson([
-            "success" => false,
-            "message" => "Validation errors",
-            "data" => [
-                "name" => ["The name field is required."],
-                "email" => ["The email field is required."],
-                "password" => ["The password field is required."],
-                "confirm_password"=>[ "The confirm password field is required."]
-            ]
-        ]);
-    }
-    public function test_password_matching(){
-
-    }
-    public function test_register(){
+    public function test_user_register(){
         $response = $this->json('POST', 'api/register',$this->userData, ['Accept' => 'application/json']) ;
-        dd($response);
-       //  $response->assertStatus(Response::HTTP_BAD_REQUEST); 
-         
- 
+
+        $response->assertStatus(Response::HTTP_OK)
+            ->assertJsonStructure([
+                'data' => [
+                    'token',
+                    'name',
+                ],
+            ]);
     }
+
+    /**
+     * Test a successful user login.
+     */
+
+    public function test_user_login()
+    {
+        //Create a user
+        $this->json('POST', 'api/register',$this->userData, ['Accept' => 'application/json']) ;
+
+        $response = $this->json('POST', 'api/login',$this->userData, ['Accept' => 'application/json']) ;
+        $response->assertStatus(Response::HTTP_OK)
+            ->assertJson([
+                'message' => 'User login successfully.',
+            ]);
+
+    }
+
+    /**
+     * Test validation for registration with missing data.
+     */
+    public function test_register_validation()
+    {
+        $response = $this->json('POST', '/api/register', [], ['Accept' => 'application/json']);
+
+        $response->assertStatus(Response::HTTP_BAD_REQUEST)
+            ->assertJson([
+                'success' => false,
+                'message' => 'Validation errors',
+            ])
+            ->assertJsonStructure([
+                'data' => [
+                    'name',
+                    'email',
+                    'password',
+                    'confirm_password',
+                ]
+            ]);
+    }
+
+     /**
+      * Test validation for login with missing data.
+      */
+    public function test_login_validation()
+    {
+        $response = $this->json('POST', '/api/login', [], ['Accept' => 'application/json']);
+
+        $response->assertStatus(Response::HTTP_BAD_REQUEST)
+            ->assertJson([
+                'success' => false,
+                'message' => 'Validation errors',
+            ])
+            ->assertJsonStructure([
+                'data' => [
+                    'email',
+                    'password',
+                ]
+            ]);
+    }
+
 }
