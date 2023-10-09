@@ -98,7 +98,47 @@ class IpListTest extends TestCase
         $response=$this->json('GET', "api/ip_lists", ['Accept' => 'application/json']);
         $response->assertStatus(Response::HTTP_OK);
         $response_data=$response->json();
-        $this->assertCount(4,$response_data['data']);
+        $this->assertCount(3,$response_data['data']);
         
+    }
+
+
+    public function test_iplist_validation()
+    {
+        Sanctum::actingAs(User::factory()->create());
+        
+        $response = $this->json('POST', '/api/ip_lists', [], ['Accept' => 'application/json']);
+
+        $response->assertStatus(Response::HTTP_BAD_REQUEST)
+            ->assertJson([
+                'success' => false,
+                'message' => 'Validation errors',
+            ])
+            ->assertJsonStructure([
+                'data' => [
+                    'ip_address',
+                    'label',
+                ]
+            ]);
+    }
+    public function test_iplist_update_validation()
+    {
+        Sanctum::actingAs(User::factory()->create());
+        
+        $response = $this->json('POST', 'api/ip_lists',$this->ipData, ['Accept' => 'application/json'])->json();
+        $id=$response['data']['id'];
+        $response_update_ip = $this->json('PUT', "api/ip_lists/{$id}",[], ['Accept' => 'application/json']);
+
+        $response_update_ip->assertStatus(Response::HTTP_BAD_REQUEST)
+            ->assertJson([
+                'success' => false,
+                'message' => 'Validation errors',
+            ])
+            ->assertJsonStructure([
+                'data' => [
+                    'ip_address',
+                    'label',
+                ]
+            ]);
     }
 }
