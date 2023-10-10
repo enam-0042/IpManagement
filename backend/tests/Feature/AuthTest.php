@@ -12,7 +12,7 @@ use Tests\TestCase;
 class AuthTest extends TestCase
 {
     use DatabaseMigrations;
-    public $userData=[
+    public $userData = [
         "name" => "John Doe",
         "email" => "doe@example.com",
         "password" => "demo12345",
@@ -23,8 +23,9 @@ class AuthTest extends TestCase
      * Test a successful user registration.
      */
 
-    public function test_user_register(){
-        $response = $this->json('POST', 'api/register',$this->userData, ['Accept' => 'application/json']) ;
+    public function test_user_register()
+    {
+        $response = $this->json('POST', 'api/register', $this->userData, ['Accept' => 'application/json']);
 
         $response->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure([
@@ -42,14 +43,13 @@ class AuthTest extends TestCase
     public function test_user_login()
     {
         //Create a user
-        $this->json('POST', 'api/register',$this->userData, ['Accept' => 'application/json']) ;
+        $this->json('POST', 'api/register', $this->userData, ['Accept' => 'application/json']);
 
-        $response = $this->json('POST', 'api/login',$this->userData, ['Accept' => 'application/json']) ;
+        $response = $this->json('POST', 'api/login', $this->userData, ['Accept' => 'application/json']);
         $response->assertStatus(Response::HTTP_OK)
             ->assertJson([
                 'message' => 'User login successfully.',
             ]);
-
     }
 
     /**
@@ -74,9 +74,9 @@ class AuthTest extends TestCase
             ]);
     }
 
-     /**
-      * Test validation for login with missing data.
-      */
+    /**
+     * Test validation for login with missing data.
+     */
     public function test_login_validation()
     {
         $response = $this->json('POST', '/api/login', [], ['Accept' => 'application/json']);
@@ -93,5 +93,4 @@ class AuthTest extends TestCase
                 ]
             ]);
     }
-
 }
